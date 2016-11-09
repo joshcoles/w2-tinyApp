@@ -9,7 +9,13 @@
     <h1>Your URLS</h1>
       <ul>
         <% Object.keys(urls).forEach(function(key) { %>
-          <li> <%=key%> - <%= urls[key] %></li>
+          <li>
+            tiny.app/<%=key%>
+            -
+            <a href="<%=urls[key]%>">
+              <%= urls[key] %>
+            </a>
+          </li>
         <% }); %>
       </ul>
     <a href="urls/new">Click here to shorten your own link.</a>

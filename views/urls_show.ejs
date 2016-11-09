@@ -11,7 +11,7 @@
     <% if (fullURL === undefined) { %>
       <p>&quot;<%= shortURL %>&quot; is not a valid URL.</p>
     <% } else { %>
-      <p><strong><%= shortURL %></strong> - <%= fullURL %> <p>
+      <p><strong>tiny.app/<%= shortURL %></strong> - <a href="<%= fullURL %>"> <%= fullURL %></a> <p>
     <% } %>
 </body>
 </html>

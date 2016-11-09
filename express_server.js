@@ -19,15 +19,10 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.get("/urls", (req, res) => {
   let templateVars = {urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
-
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -39,6 +34,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   //assign long url value to the value of what's put in text field
@@ -48,8 +49,26 @@ app.post("/urls", (req, res) => {
   //assign short and long url as key value pairs
   urlDatabase[shortURL] = longURL;
   //after assigning, redirect browser to url pair list
-  res.redirect("/urls");
+
+
+  // let re = new RegExp(^(http|https):\/\/)
+
+  // if (longURL == re) {
+  //   console.log("Wahoo!")
+  // }
+
+
+
+
+  res.redirect(`/urls/${shortURL}`);
 });
+
+
+app.get("/u/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
