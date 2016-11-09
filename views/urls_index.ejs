@@ -15,9 +15,23 @@
             <a href="<%=urls[key]%>">
               <%= urls[key] %>
             </a>
+
+              <form method="POST" action="/urls/<%= key %>/delete">
+                <input id="shortURL" type="submit" value="Delete">
+              </form>
+
           </li>
         <% }); %>
       </ul>
     <a href="urls/new">Click here to shorten your own link.</a>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
