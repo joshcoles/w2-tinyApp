@@ -45,7 +45,9 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   //assign shorturl to generated random string
   let shortURL = generateRandomString();
+  //assign short and long url as key value pairs
   urlDatabase[shortURL] = longURL;
+  //after assigning, redirect browser to url pair list
   res.redirect("/urls");
 });
 
