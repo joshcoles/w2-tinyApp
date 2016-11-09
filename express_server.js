@@ -41,21 +41,38 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+
+
+function fixURL(brokenURL) {
+  if (longURL.startsWith("www.")) {
+    longURL = "http://" + longURL;
+    // console.log("You started with www.")
+    return longURL;
+  } else if (longURL.startsWith("http://")) {
+    // console.log("You started with http://")
+    return longURL;
+  } else if (longURL.startsWith("https://")) {
+    // console.log("You started with https://")
+    return longURL;
+  } else {
+    longURL = "http://www." + longURL;
+    // console.log("You started with nothing");
+    return longURL;
+  }
+}
+
   // console.log(req.body);
   //assign long url value to the value of what's put in text field
   let longURL = req.body.longURL;
   //assign shorturl to generated random string
   let shortURL = generateRandomString();
   //assign short and long url as key value pairs
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = fixURL(longURL);
   //after assigning, redirect browser to url pair list
 
 
-  // let re = new RegExp(^(http|https):\/\/)
 
-  // if (longURL == re) {
-  //   console.log("Wahoo!")
-  // }
+// console.log(fixURL(req.body.longURL));
 
 
 
