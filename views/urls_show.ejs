@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+  <% include ./partials/_header %>
+</head>
+<body>
+    <!-- Add your EJS code here -->
+    <h1>Your URL</h1>
+
+    <% if (fullURL === undefined) { %>
+      <p>&quot;<%= shortURL %>&quot; is not a valid URL.</p>
+    <% } else { %>
+      <p><strong><%= shortURL %></strong> - <%= fullURL %> <p>
+    <% } %>
+</body>
+</html>
