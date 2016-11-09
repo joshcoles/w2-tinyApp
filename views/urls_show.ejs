@@ -13,5 +13,18 @@
     <% } else { %>
       <p><strong>tiny.app/<%= shortURL %></strong> - <a href="<%= fullURL %>"> <%= fullURL %></a> <p>
     <% } %>
+
+    <form action="/urls/<%= shortURL %>" method="POST">
+
+      <label>Enter an updated URL:
+        <input id="updatedURL" type="text" name="updatedURL" value="<%= fullURL %>" style="width: 300px">
+      </label>
+
+      <input type="submit" value="Submit">
+
+    </form>
+
+
 </body>
 </html>
+

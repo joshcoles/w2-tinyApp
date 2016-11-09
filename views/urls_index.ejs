@@ -20,6 +20,10 @@
                 <input id="shortURL" type="submit" value="Delete">
               </form>
 
+              <form method="GET" action="/urls/<%= key %>">
+                <input id="shortURL" type="submit" value="Edit">
+              </form>
+
           </li>
         <% }); %>
       </ul>

@@ -40,26 +40,14 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.post("/urls/:id", (req, res) => {
+  let updatedURL = req.body.updatedURL;
+  urlDatabase[req.params.id] = fixURL(updatedURL);
+  console.log(urlDatabase[req.params.id])
+  res.redirect(`/urls/${req.params.id}`)
+});
+
 app.post("/urls", (req, res) => {
-
-
-  function fixURL(brokenURL) {
-    if (longURL.startsWith("www.")) {
-      longURL = "http://" + longURL;
-      // console.log("You started with www.")
-      return longURL;
-    } else if (longURL.startsWith("http://")) {
-      // console.log("You started with http://")
-      return longURL;
-    } else if (longURL.startsWith("https://")) {
-      // console.log("You started with https://")
-      return longURL;
-    } else {
-      longURL = "http://www." + longURL;
-      // console.log("You started with nothing");
-      return longURL;
-    }
-  };
 
   //assign long url value to the value of what's put in text field
   let longURL = req.body.longURL;
@@ -72,8 +60,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-
-
 app.post("/urls/:id/delete", (req, res) =>{
 
   let shortURL = req.params.id;
@@ -81,11 +67,6 @@ app.post("/urls/:id/delete", (req, res) =>{
 
   res.redirect("/urls")
 });
-
-
-
-
-
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
@@ -100,6 +81,15 @@ app.listen(PORT, () => {
 function generateRandomString () {
   return Math.random().toString(36).substr(2, 6);
 }
+
+function fixURL(longURL) {
+  if (!(longURL.includes("://"))) {
+    longURL = "http://" + longURL;
+  }
+  return longURL;
+}
+
+
 
 
 
