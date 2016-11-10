@@ -2,6 +2,7 @@
 <body>
 <% include ./partials/_header %>
     <!-- Add your EJS code here -->
+    <main>
     <h1>Your URL</h1>
 
     <% if (fullURL === undefined) { %>
@@ -19,9 +20,7 @@
       <input type="submit" value="Submit">
 
     </form>
-    <br>
-  <a href="/urls"><button>Back to URLs list</button></a>
-
+    </main>
 </body>
 </html>
 

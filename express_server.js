@@ -30,7 +30,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     username: req.cookies["username"]
    };
-   console.log(req.cookies);
+   console.log("Cookie created for the username: " + "'" + req.cookies["username"] + "'.");
   res.render("urls_index", templateVars);
 });
 
@@ -105,6 +105,7 @@ app.post("/logout", (req, res) => {
   // });
 
   res.clearCookie("username");
+  console.log("Cookie deleted.")
 
   res.redirect("/login")
 })

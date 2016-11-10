@@ -4,8 +4,75 @@
   <title>TinyApp</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Open Sans", sans-serif;
-  }
+      font: 15px "Open Sans", sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    main {
+      margin-left: 20px;
+      padding: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: magenta;
+    }
+
+    a:visited {
+      color: magenta;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    header {
+      background-color: yellow;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0;
+      padding: 15px 30px;
+    }
+
+    /*header > * {
+      border: 1px solid black;
+    }*/
+
+    header ul {
+      overflow: auto;
+      list-style: none;
+      margin-left: -425px
+    }
+
+    header li {
+      float: left;
+      width: 90px;
+    }
+
+    header p {
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    header form {
+      display: inline-block;
+    }
+
+    form {
+      display: inline-block;
+      padding-left: 10px;
+    }
+
   </style>
 </head>

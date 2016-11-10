@@ -2,6 +2,7 @@
 <body>
   <% include ./partials/_header %>
     <!-- Add your EJS code here -->
+    <main>
     <h1>Your URLS</h1>
       <ul>
         <% Object.keys(urls).forEach(function(key) { %>
@@ -23,7 +24,7 @@
           </li>
         <% }); %>
       </ul>
-    <a href="urls/new">Click here to shorten your own link.</a>
+    </main>
 </body>
 </html>
 
