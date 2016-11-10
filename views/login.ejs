@@ -1,28 +1,14 @@
-
-<header>
+<% include ./partials/_head %>
+<body>
+  <header>
     <h3 style="color: red">TinyApp&copy;</h3>
-
-
-<% if (!username) { %>
-
+    <p>Hi! Please login below. No password required.</p>
     <form action="/login" method="POST">
       <label><strong>Login</strong>
         <input id="username" type="text" name="username" placeholder="username" style="width: 150px">
         <input type="submit" value="Sign In">
       </label>
     </form>
-
-<% } else { %>
-
-
-
-    <form action="/logout" method="POST">
-      <input type="submit" value="Logout">
-    </form>
-
-
-  <p>Hi, <%= username %>!</p>
-
-<% } %>
-
-</header>
+  </header>
+</body>
+</html>
