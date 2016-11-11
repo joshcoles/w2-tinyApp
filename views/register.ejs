@@ -1,15 +1,16 @@
 <% include ./partials/_head %>
 <body>
-  <header>
+<% include ./partials/_header %>
 
-    <h3 style="color: red">TinyApp&copy;</h3>
 
-  </header>
-  <div class="welcome">
-  <h2>Please login below</h2>
-  </div>
-  <main>
-  <form action="/login" method="POST">
+
+
+<div class="welcome">
+  <h2> Welcome to TinyApp&copy;</h2>
+  <h5> Please register below.</h5>
+</div>
+<main>
+  <form action="/register" method="POST">
     <label for="email"><h1>Email</h1></label>
     <label for="password"><h1>Password</h1></label>
 
@@ -19,6 +20,14 @@
     <br>
     <input type="submit" value="Submit">
   </form>
-  </main>
+
+</main>
+
+
+
+
+
+
+
 </body>
 </html>

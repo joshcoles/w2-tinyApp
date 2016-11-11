@@ -8,18 +8,13 @@
     </ul>
   </nav>
 
-<% if (!username) { %>
+<% if (!email) { %>
   <div class="logged-out">
-  <form action="/login" method="POST">
-    <label><strong>Login</strong>
-      <input id="username" type="text" name="username" placeholder="username" style="width: 150px">
-    </label>
-    <input type="submit" value="Sign In">
-  </form>
+
   </div>
 <% } else { %>
   <div class="logged-in">
-  <p>Hi, <%= username %>!</p>
+  <p>Logged in as: <%= email %></p>
   <form action="/logout" method="POST">
     <input type="submit" value="Logout">
   </form>
