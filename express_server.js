@@ -11,6 +11,11 @@ const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+app.use(function(req, res, next) {
+  let idOfUserFromCookie = req.cookies["User-ID"];
+  req.currentUser = users[idOfUserFromCookie];
+  next();
+})
 
 app.set('trust proxy', 1)
 app.set("view engine", "ejs");
@@ -24,9 +29,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {
-
-}
+const users = require('./users.json')
 
 //==================== FUNCTIONS ==========================
 
@@ -83,10 +86,17 @@ app.post("/login", (req, res) => {
     if ((loginPassword === users[i].password) && (loginEmail === users[i].email)) {
       res.cookie("User-ID", users[i].id)
       res.redirect("/urls");
-      return;
+      // return;
     }
   }
-  res.redirect("/login")
+
+  for (let i in users) {
+    if ((users[i].email !== loginEmail) || (users[i].password !== loginPassword) ) {
+      res.status(403).send("Incorrect email or password. Please register or check your password.")
+    }
+  }
+
+  // res.redirect("/login")
 });
 
 //================ ADD URL ==========================
@@ -101,12 +111,12 @@ app.get("/urls/new", (req, res) => {
     email: currentUser.username;
   });*/
 
-  let idOfUserFromCookie = req.cookies["User-ID"];
-  let currentUser = users[idOfUserFromCookie];
+  // let idOfUserFromCookie = req.cookies["User-ID"];
+  // let currentUser = users[idOfUserFromCookie];
 
-    if (currentUser) {
+    if (req.currentUser) {
       res.render("urls_new", {
-        email: currentUser.email
+        email: req.currentUser.email
       });
     } else {
       res.redirect("/login");
@@ -137,35 +147,72 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  if (!req.cookies["User-ID"]) {
+
+  let idOfUserFromCookie = req.cookies["User-ID"];
+  let currentUser = users[idOfUserFromCookie];
+
+  if (currentUser) {
+    let longURL = req.body.longURL;
+    let shortURL = generateRandomString();
+    urlDatabase[shortURL] = fixURL(longURL);
+    res.redirect(`/urls/${shortURL}`);
+  } else {
     res.redirect("/login");
   }
-  //assign long url value to the value of what's put in text field
-  let longURL = req.body.longURL;
-  //assign shorturl to generated random string
-  let shortURL = generateRandomString();
-  //assign short and long url as key value pairs
-  urlDatabase[shortURL] = fixURL(longURL);
-  //after assigning, redirect browser to url pair list
 
-  res.redirect(`/urls/${shortURL}`);
+  //Is this the same as above?
+
+  // if (!req.cookies["User-ID"]) {
+  //   res.redirect("/login");
+  // }
+  // //assign long url value to the value of what's put in text field
+  // let longURL = req.body.longURL;
+  // //assign shorturl to generated random string
+  // let shortURL = generateRandomString();
+  // //assign short and long url as key value pairs
+  // urlDatabase[shortURL] = fixURL(longURL);
+  // //after assigning, redirect browser to url pair list
+
+  // res.redirect(`/urls/${shortURL}`);
 });
-
 
 
 
 //=================== UNIQUE URL ====================
 
 app.get("/urls/:id", (req, res) => {
-  if (!req.cookies["User-ID"]) {
-    res.redirect("/login");
-  }
-  let templateVars = {
+let idOfUserFromCookie = req.cookies["User-ID"];
+let currentUser = users[idOfUserFromCookie];
+
+let templateVars = {
     shortURL: req.params.id,
     fullURL: urlDatabase[req.params.id],
-    username: req.cookies["User-ID"]
+    username: req.cookies["User-ID"],
+    email: currentUser.email
   };
-  res.render("urls_show", templateVars);
+
+
+  if (currentUser) {
+    let templatevars = {
+      shortURL: req.params.id,
+      fullURL: urlDatabase[req.params.id],
+      username: req.cookies["User-ID"]
+    }
+    res.render("urls_show", templateVars)
+  } else {
+    res.redirect("/login");
+  }
+
+
+  // if (!req.cookies["User-ID"]) {
+  //   res.redirect("/login");
+  // }
+  // let templateVars = {
+  //   shortURL: req.params.id,
+  //   fullURL: urlDatabase[req.params.id],
+  //   username: req.cookies["User-ID"]
+  // };
+  // res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -230,6 +277,14 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
 
+
+  for (var i in users) {
+    if (req.body.email === users[i].email) {
+      res.status(400);
+      res.send('Email already taken');
+    }
+  }
+
   let userID = generateRandomUserID();
   users[userID] = {};
   users[userID].id = userID;
@@ -237,9 +292,10 @@ app.post("/register", (req, res) => {
   users[userID].password = req.body.password;
   console.log(users);
 
+  res.redirect("/login");
+
   // console.log("users.userID.id: " + users.userID.id);
   // console.log("users.userID.email: " + users.userID.email);
-  res.redirect("/login");
 })
 
 
