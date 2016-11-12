@@ -1,33 +1,28 @@
 <% include ./partials/_head %>
 <body>
   <header>
-
     <h3 style="color: red">TinyApp&copy;.</h3>
-
     <nav>
       <ul>
         <li><a href="/urls/new">Create</a></li>
         <li><a href="/urls">Your URLs</a></li>
       </ul>
     </nav>
-
-
   </header>
   <div class="welcome">
   <h2> Welcome to TinyApp&copy;</h2>
   <h5>Please login below.</h5>
   </div>
   <main>
-  <form action="/login" method="POST">
-    <label for="email"><h1>Email</h1></label>
-    <label for="password"><h1>Password</h1></label>
-
-    <input id="email" type="email" name="email" placeholder="email@email.com" style="width: 300px">
-    <br>
-    <input id="password" type="password" name="password" placeholder="password" style="width: 300px">
-    <br>
-    <input type="submit" value="Submit">
-  </form>
+    <form action="/login" method="POST">
+      <label for="email"><h1>Email</h1></label>
+      <label for="password"><h1>Password</h1></label>
+      <input id="email" type="email" name="email" placeholder="email@email.com" style="width: 300px">
+      <br>
+      <input id="password" type="password" name="password" placeholder="password" style="width: 300px">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
   <div class="welcome">
   <h5>Not a user? <a href="/register">register.</a></h5>
   </div>

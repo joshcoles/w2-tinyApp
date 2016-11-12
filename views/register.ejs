@@ -1,10 +1,6 @@
 <% include ./partials/_head %>
 <body>
 <% include ./partials/_header %>
-
-
-
-
 <div class="welcome">
   <h2> Welcome to TinyApp&copy;</h2>
   <h5> Please register below.</h5>
@@ -13,24 +9,15 @@
   <form action="/register" method="POST">
     <label for="email"><h1>Email</h1></label>
     <label for="password"><h1>Password</h1></label>
-
     <input id="email" type="email" name="email" placeholder="email@email.com" style="width: 300px">
     <br>
     <input id="password" type="password" name="password" placeholder="password" style="width: 300px">
     <br>
     <input type="submit" value="Submit">
   </form>
-<div class="welcome">
-  <h5>Already a user? <a href="/login">login.</a></h5>
-</div>
-
+  <div class="welcome">
+    <h5>Already a user? <a href="/login">login.</a></h5>
+  </div>
 </main>
-
-
-
-
-
-
-
 </body>
 </html>

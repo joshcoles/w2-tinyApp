@@ -1,31 +1,26 @@
 <% include ./partials/_head %>
 <body>
-  <% include ./partials/_header %>
-    <!-- Add your EJS code here -->
-    <main>
-    <h1>Your URLS</h1>
-      <ul>
-        <% urls.forEach(function(url) { %>
-          <li>
-            tiny.app/u/<%=url.shortURL%>
-            -
-            <a href="<%=url.longURL%>">
-              <%= url.longURL %>
-            </a>
-
-              <form method="GET" action="/urls/<%= url.shortURL %>">
-                <input id="shortURL" type="submit" value="Edit">
-              </form>
-
-              <form method="POST" action="/urls/<%= url.shortURL %>/delete">
-                <input id="shortURL" type="submit" value="Delete">
-              </form>
-
-
-          </li>
-        <% }); %>
-      </ul>
-    </main>
+<% include ./partials/_header %>
+<main>
+  <h1>Your URLS</h1>
+  <ul>
+  <% urls.forEach(function(url) { %>
+    <li>
+      tiny.app/u/<%=url.shortURL%>
+      -
+      <a href="<%=url.longURL%>">
+        <%= url.longURL %>
+      </a>
+      <form method="GET" action="/urls/<%= url.shortURL %>">
+        <input id="shortURL" type="submit" value="Edit">
+      </form>
+      <form method="POST" action="/urls/<%= url.shortURL %>/delete">
+        <input id="shortURL" type="submit" value="Delete">
+      </form>
+    </li>
+  <% }); %>
+  </ul>
+</main>
 </body>
 </html>
 
