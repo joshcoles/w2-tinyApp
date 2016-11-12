@@ -5,19 +5,19 @@
     <main>
     <h1>Your URLS</h1>
       <ul>
-        <% Object.keys(urls).forEach(function(key) { %>
+        <% urls.forEach(function(url) { %>
           <li>
-            tiny.app/<%=key%>
+            tiny.app/<%=url.shortURL%>
             -
-            <a href="<%=urls[key]%>">
-              <%= urls[key] %>
+            <a href="<%=url.longURL%>">
+              <%= url.longURL %>
             </a>
 
-              <form method="POST" action="/urls/<%= key %>/delete">
+              <form method="POST" action="/urls/<%= url.shortURL %>/delete">
                 <input id="shortURL" type="submit" value="Delete">
               </form>
 
-              <form method="GET" action="/urls/<%= key %>">
+              <form method="GET" action="/urls/<%= url.shortURL %>">
                 <input id="shortURL" type="submit" value="Edit">
               </form>
 
