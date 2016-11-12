@@ -1,11 +1,11 @@
 {"lkjhgfghjkl" : {
   "id":"lkjhgfghjkl",
   "email": "a@a.com",
-  "password": "p"
+  "password": "$2a$10$7RfCM4kiZulkPTk4293CtOxSg2oEaTzVgXWr1NGoW2l81rYZqy45i"
   },
 "ggggttttttt" : {
   "id":"ggggttttttt",
   "email": "josh@joshcoles.com",
-  "password": "1234"
+  "password": "$2a$10$z5PAa0LTgrtu24FmCl3LeuNLbMKnqECoieXUsrWAU6ef49U3Elo8G"
   }
 }

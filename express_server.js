@@ -4,13 +4,30 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
+const bcrypt = require('bcrypt');
+
+
+
+
+
+
+
+
+
+
 
 
 //================= MIDDLEWARE =========================
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['joshkey', 'secretkey'],
 
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 //For every request, this assigns the value of
 //idOfUserFromCookie to the cookie called "userID".
@@ -22,7 +39,7 @@ app.use(cookieParser());
 //then redirect to /login, which now includes a link to /register.
 
 app.use(function(req, res, next) {
-  let idOfUserFromCookie = req.cookies["userID"];
+  let idOfUserFromCookie = req.session.userID;
   req.currentUser = users[idOfUserFromCookie];
   if (req.currentUser === undefined && (req.path !== "/login" && req.path !== "/register" && !req.path.startsWith("/u/"))) {
     res.redirect("/login");
@@ -97,7 +114,7 @@ app.get("/", (req, res) => {
 //
 app.get("/register", (req, res) => {
   let templateVars = {
-    email: req.cookies["userID"]
+    email: req.session.userID
   };
     res.render("register", templateVars);
 })
@@ -120,32 +137,96 @@ app.post("/login", (req, res) => {
   let loginEmail = req.body.email;
   let loginPassword = req.body.password;
 
-//This checks loginEmail and loginPassword against our user object
-//AKA registered users database.
+  //console.log(loginPassword);
 
-//If they both match, set cookie as { "userID": 293587hsdgo823h3gg }
-//and redirect to "/urls". This is the breakpoint where users are
-//either allowed to access the site or they are not.
+  //This checks loginEmail and loginPassword against our user object
+  //AKA registered users database.
 
-  for (let i in users) {
-    if ((loginPassword === users[i].password) && (loginEmail === users[i].email)) {
-      res.cookie("userID", users[i].id);
-      res.redirect("/urls");
-      return;
+  //If they both match, set cookie as { "userID": 293587hsdgo823h3gg }
+  //and redirect to "/urls". This is the breakpoint where users are
+  //either allowed to access the site or they are not.
+
+
+
+  // 1) figure out which user the request wants to log in as
+  // 2) did that work out?
+  //    2a, yes i) make a call to bcrypt.compare.
+  //            ii) did that work?
+  //                  yes ) log them in
+  //                  no  ) do something else (redir to login page?)
+  //    2b, no  i) do something else (redir to login page?)
+
+  // console.log("users:", users);
+
+  var user = null;
+  for (userId in users) {
+    var user_candidate = users[userId];
+    if (user_candidate.email === loginEmail) {
+      user = user_candidate;
     }
   }
 
-//When logging in, this throws an error if the loginEmail or
-//loginPassword do not match the users object data.
+  if (user === null) {
+    // res.redirect("/login");
+    res.status(403).send("Incorrect email or password. Please register or check your password.")
 
-  for (let i in users) {
-    if ((users[i].email !== loginEmail) || (users[i].password !== loginPassword) ) {
-      res.status(403).send("Incorrect email or password. Please register or check your password.")
-      return;
-    }
+  } else {
+    // var samePass = bcrypt.compareSync(loginPassword, user.password);
+    // if (samePass){
+    //   yay();
+    // } else {
+    //   boo();
+    // }
+
+
+    bcrypt.compare(loginPassword, user.password, function(err, passwordMatches){
+      if (err) {
+        // console.log("error in bcrypt?", err);
+        res.redirect("/login");
+      } else if (!passwordMatches) {
+        res.status(403).send("Incorrect email or password. Please register or check your password.")
+      } else {
+        req.session.userID = user.id;
+        res.redirect("/urls");
+      }
+    });
   }
 
-});
+
+
+  // 1) make a function F to see if this req has a correct password
+  // 2) for all users, see if they match on username (using ===) and on password (using F)
+  // 3) if there was more than one of those, or zero of those, freak out
+  // 4) if there was one of those, log them in
+
+
+  // var arePasswordsTheSame = bcrypt.compare(loginPassword, users[i].password, function (err, passwordMatches) {
+  //   if (passwordMatches) {
+  //     return true;
+  //   } else {
+  //     res.status(403).send("wrong password mannnn");
+  //   }
+  // })
+
+  // for (let i in users) {
+  //   if (true && (loginEmail === users[i].email)) {
+  //     res.cookie("userID", users[i].id);
+  //     res.redirect("/urls");
+  //     return;
+  //   }
+  // }
+
+  //When logging in, this throws an error if the loginEmail or
+  //loginPassword do not match the users object data.
+
+  // for (let i in users) {
+  //   if ((users[i].email !== loginEmail) || true ) {
+  //     res.status(403).send("Incorrect email or password. Please register or check your password.")
+  //     return;
+  //   }
+  // }
+
+});  // app.post("/login", ....)
 
 
 //================ ADD URL ==========================
@@ -194,7 +275,7 @@ app.get("/urls", (req, res) => {
 
 
 //
-  console.log("Cookie created for the username: " + "'" + req.cookies["userID"] + "'.");
+  console.log("Cookie created for the username: " + "'" + req.session.userID + "'.");
   res.render("urls_index", templateVars)
 
 });
@@ -227,7 +308,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     fullURL: urlDatabase[req.params.id].longURL,
-    username: req.cookies["userID"],
+    username: req.session.userID,
     email: req.currentUser.email
   }
 console.log(urlDatabase);
@@ -270,7 +351,8 @@ app.get("/urls.json", (req, res) => {
 
 app.post("/logout", (req, res) => {
 
-  res.clearCookie("userID");
+  req.session.userID = null;
+  // res.clearCookie("userID");
   console.log("Cookie deleted.");
 
   res.redirect("/login");
@@ -296,7 +378,7 @@ app.post("/register", (req, res) => {
   users[userID] = {};
   users[userID].id = userID;
   users[userID].email = req.body.email;
-  users[userID].password = req.body.password;
+  users[userID].password = bcrypt.hashSync(req.body.password, 10);
   console.log(users);
 
   res.redirect("/login");
