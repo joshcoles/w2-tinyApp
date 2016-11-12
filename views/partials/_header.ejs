@@ -2,16 +2,16 @@
 <header>
   <h3 style="color: red">TinyApp&copy;</h3>
   <nav>
-    <ul>
-      <li><a href="/urls/new">Create</a></li>
-      <li><a href="/urls">Your URLs</a></li>
-    </ul>
+
   </nav>
 
 <% if (!email) { %>
   <div class="logged-out"></div>
+
 <% } else { %>
   <div class="logged-in">
+  <a href="/urls/new">Create</a>
+  <a href="/urls">Your URLs</a>
   <p>Logged in as: <%= email %></p>
   <form action="/logout" method="POST">
     <input type="submit" value="Logout">

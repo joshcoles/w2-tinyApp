@@ -7,19 +7,20 @@
       <ul>
         <% urls.forEach(function(url) { %>
           <li>
-            tiny.app/<%=url.shortURL%>
+            tiny.app/u/<%=url.shortURL%>
             -
             <a href="<%=url.longURL%>">
               <%= url.longURL %>
             </a>
 
+              <form method="GET" action="/urls/<%= url.shortURL %>">
+                <input id="shortURL" type="submit" value="Edit">
+              </form>
+
               <form method="POST" action="/urls/<%= url.shortURL %>/delete">
                 <input id="shortURL" type="submit" value="Delete">
               </form>
 
-              <form method="GET" action="/urls/<%= url.shortURL %>">
-                <input id="shortURL" type="submit" value="Edit">
-              </form>
 
           </li>
         <% }); %>

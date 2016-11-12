@@ -3,21 +3,21 @@
 <% include ./partials/_header %>
     <!-- Add your EJS code here -->
     <main>
-    <h1>Your URL</h1>
-
+    <h1>tiny.app/u/<%=shortURL%> - <a href="<%= fullURL %>"> <%= fullURL %></a></h1>
+    <br>
     <% if (fullURL === undefined) { %>
       <p>&quot;<%= shortURL %>&quot; is not a valid URL.</p>
     <% } else { %>
-      <p><strong>tiny.app/<%= shortURL %></strong> - <a href="<%= fullURL %>"> <%= fullURL %></a> <p>
     <% } %>
 
     <form action="/urls/<%= shortURL %>" method="POST">
-
-      <label>Enter an updated URL:
+      <label>Update your tinyURL:
         <input id="longURL" type="text" name="longURL" value="<%= fullURL %>" style="width: 300px">
       </label>
 
       <input type="submit" value="Submit">
+
+
 
     </form>
     </main>

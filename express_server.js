@@ -7,27 +7,17 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
-
-
-
-
-
-
-
-
-
-
-
 //================= MIDDLEWARE =========================
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(cookieParser());
+
 app.use(cookieSession({
   name: 'session',
   keys: ['joshkey', 'secretkey'],
 
-  // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
+
+
 
 //For every request, this assigns the value of
 //idOfUserFromCookie to the cookie called "userID".
@@ -41,8 +31,11 @@ app.use(cookieSession({
 app.use(function(req, res, next) {
   let idOfUserFromCookie = req.session.userID;
   req.currentUser = users[idOfUserFromCookie];
-  if (req.currentUser === undefined && (req.path !== "/login" && req.path !== "/register" && !req.path.startsWith("/u/"))) {
+  if (req.currentUser === undefined && (req.path !== "/login" && req.path !== "/register" && req.path !=="/urls/new" && req.path !=="/urls" && !req.path.startsWith("/u/"))) {
     res.redirect("/login");
+    // res.render("unauthorized");
+    return;
+    // res.send('Email already taken');
   } else {
     next();
   }
@@ -80,7 +73,7 @@ const urlDatabase = {
 //this .json file.
 
 //Populated by filling in and submitting form on register page.
-const users = require('./users.json')
+const users = require('./users.json');
 
 //==================== FUNCTIONS ==========================
 
@@ -113,11 +106,17 @@ app.get("/", (req, res) => {
 
 //
 app.get("/register", (req, res) => {
-  let templateVars = {
+  if (req.currentUser) {
+    res.redirect("/login");
+  } else {
+    let templateVars = {
     email: req.session.userID
   };
     res.render("register", templateVars);
+  }
+
 })
+
 
 
 //Renders login page, unless user is already signed in. If user is
@@ -184,7 +183,7 @@ app.post("/login", (req, res) => {
         // console.log("error in bcrypt?", err);
         res.redirect("/login");
       } else if (!passwordMatches) {
-        res.status(403).send("Incorrect email or password. Please register or check your password.")
+        res.status(401).render("401");
       } else {
         req.session.userID = user.id;
         res.redirect("/urls");
@@ -234,11 +233,15 @@ app.post("/login", (req, res) => {
 //If user is logged in, render new URL submission page.
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", {
-    email: req.currentUser.email
-  });
-});
 
+  if (req.currentUser === undefined) {
+    res.status(401).render("unauthorized");
+  } else {
+    res.render("urls_new", {
+      email: req.currentUser.email
+    });
+  }
+});
 
 //=============== LIST OF URLS =======================
 
@@ -246,39 +249,39 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls", (req, res) => {
 
-//Exports data
-  //urlDatabase becomes available for display using forEach loop
-  //email becomes available for display in navBar
 
+  if (req.currentUser === undefined) {
+    res.status(418).render("unauthorized-418");
+  } else {
+  //Exports data
+    //urlDatabase becomes available for display using forEach loop
+    //email becomes available for display in navBar
 
-  //fill array with urls (objects) that belong to
-  //req.currentUser
-  //check that userID is equal to req.currentUser.id
-  //push to currentUsersURLs
-  //pass that into templatevars -> urls
-  var currentUsersURLs = [];
+    var currentUsersURLs = [];
 
-  for (var url in urlDatabase) {
-    if (urlDatabase[url].userID === req.currentUser.id) {
-      currentUsersURLs.push(urlDatabase[url]);
+    for (var url in urlDatabase) {
+      if (urlDatabase[url].userID === req.currentUser.id) {
+        currentUsersURLs.push(urlDatabase[url]);
+      }
     }
+
+
+    let templateVars = {
+      urls: currentUsersURLs,
+      email: req.currentUser.email
+    };
+
+    console.log("Cookie created for the username: " + "'" + req.session.userID + "'.");
+    res.render("urls_index", templateVars)
+
+
   }
 
-  // console.log("User id: " + req.currentUser.id);
-  // console.log("new array" + currentUsersURLs);
-
-
-  let templateVars = {
-    urls: currentUsersURLs,
-    email: req.currentUser.email
-  };
-
-
-//
-  console.log("Cookie created for the username: " + "'" + req.session.userID + "'.");
-  res.render("urls_index", templateVars)
-
 });
+
+
+
+
 
 
 app.post("/urls", (req, res) => {
@@ -294,6 +297,8 @@ app.post("/urls", (req, res) => {
       userID: req.currentUser.id
     }
     res.redirect(`/urls/${shortURL}`);
+
+    res.render("unauthorized");
 
 });
 
@@ -325,9 +330,25 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  for (var url in urlDatabase) {
+    // console.log(req.params.shortURL);
+    // console.log("url.shorturl", urlDatabase[url].shortURL);
+    if (req.params.shortURL === urlDatabase[url].shortURL) {
+      // let longURL = urlDatabase[req.params.shortURL].longURL;
+      res.redirect(urlDatabase[req.params.shortURL].longURL);
+      return;
+    }
+      // console.log(req.params.shortURL, url.shortURL, url[shortURL]);
 
-  let longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  }
+
+      res.status(404).render("404");
+      return;
+  // if (longURL !== undefined) {
+  //   res.status(404).render("404")
+  // } else {
+  //   let longURL = urlDatabase[req.params.shortURL].longURL;
+  //   res.redirect(longURL);
 });
 
 
@@ -346,7 +367,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-
 //==================== LOGOUT ==========================
 
 app.post("/logout", (req, res) => {
@@ -358,22 +378,22 @@ app.post("/logout", (req, res) => {
   res.redirect("/login");
 });
 
-
-
 //================= USER AUTHENTICATION ==================
 
 
 app.post("/register", (req, res) => {
 
+  // debugger;
+ if ((req.body.email === "") || (req.body.password === "")) {
+  res.status(400).render("400-empty-field");
+
+ } else {
 
   for (var i in users) {
     if (req.body.email === users[i].email) {
-      res.status(400);
-      res.send('Email already taken');
-      return;
+      res.status(400).render("400-duplicate");
     }
   }
-
   let userID = generateRandomUserID();
   users[userID] = {};
   users[userID].id = userID;
@@ -382,30 +402,11 @@ app.post("/register", (req, res) => {
   console.log(users);
 
   res.redirect("/login");
+  }
 })
-
-
 
 //================== LISTEN ==============================
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-//================= Language Options ====================
-
-// app.get("/choose_english", (req, res) => {
-//   res.cookie('language', 'english');
-//   res.redirect("/");
-// })
-
-// app.get("/choose_french", (req, res) => {
-//   res.cookie('language', 'english');
-//   res.redirect('/');
-// })
-
-
-
-
-
