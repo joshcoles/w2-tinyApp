@@ -135,7 +135,7 @@ app.post("/login", (req, res) => {
       if (err) {
         res.redirect("/login");
       } else if (!passwordMatches) {
-        res.status(401).render("401");
+        res.status(403).send("Incorrect email or password. Please register or check your password.");
       } else {
         req.session.userID = user.id;
         res.redirect("/urls");
@@ -203,20 +203,28 @@ app.post("/urls", (req, res) => {
 
 //displays page specific to a tinyURL with option to update (edit) or delete.
 app.get("/urls/:id", (req, res) => {
-  let templateVars = {
-    shortURL: req.params.id,
-    fullURL: urlDatabase[req.params.id].longURL,
-    username: req.session.userID,
-    email: req.currentUser.email
-  };
-  res.render("urls_show", templateVars);
+  if (req.currentUser.id !== urlDatabase[req.params.id].userID) {
+    res.status(403).render('403');
+  } else {
+    let templateVars = {
+      shortURL: req.params.id,
+      fullURL: urlDatabase[req.params.id].longURL,
+      username: req.session.userID,
+      email: req.currentUser.email
+    };
+    res.render("urls_show", templateVars);
+  }
 });
 
 //updates tinyURL
 app.post("/urls/:id", (req, res) => {
-  let updatedURL = req.body.longURL;
-  urlDatabase[req.params.id].longURL = fixURL(updatedURL);
-  res.redirect(`/urls/${req.params.id}`);
+  if (req.currentUser.id !== urlDatabase[req.params.id].userID) {
+    res.status(403).render('403');
+  } else {
+    let updatedURL = req.body.longURL;
+    urlDatabase[req.params.id].longURL = fixURL(updatedURL);
+    res.redirect(`/urls/${req.params.id}`);
+  }
 });
 
 //redirects to longURL, unless url is invalid in which case renders 404
@@ -235,9 +243,13 @@ app.get("/u/:shortURL", (req, res) => {
 
 //deletes tinyURL from urlDatabase
 app.post("/urls/:id/delete", (req, res) =>{
+  if (req.currentUser.id !== urlDatabase[req.params.id].userID) {
+    res.status(403).render('403');
+} else {
   let shortURL = req.params.id;
   delete urlDatabase[shortURL];
   res.redirect("/urls");
+  }
 });
 
 //==================== JSON ============================
